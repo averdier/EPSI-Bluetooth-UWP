@@ -449,5 +449,49 @@ namespace EPSI_Bluetooth.Services
 
             return deal;
         }
+
+        public async Task<SensorContainer> GetSensorContainerAsync(string token)
+        {
+            SensorContainer container = null;
+
+            HttpClient client = this.GetHttpClientToken(token);
+
+            HttpResponseMessage response = await client.GetAsync(_serverUrl + "sensors/");
+
+            switch (response.StatusCode)
+            {
+                case System.Net.HttpStatusCode.OK:
+                    var content = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine(content);
+                    container = JsonConvert.DeserializeObject<SensorContainer>(content);
+                    break;
+
+                case System.Net.HttpStatusCode.Unauthorized:
+                    throw new AuthorizationException("Unknown token");
+            }
+            return container;
+        }
+
+        public async Task<SensorContainer> GetSensorContainerWithRetryAsync(bool retry = true)
+        {
+            SensorContainer container = null;
+            try
+            {
+                container = await GetSensorContainerAsync(_token);
+            }
+            catch (AuthorizationException)
+            {
+                if (retry)
+                {
+                    await RenewAuthToken();
+                    container = await GetSensorContainerAsync(_token);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return container;
+        }
     }
 }

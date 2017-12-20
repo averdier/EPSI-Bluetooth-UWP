@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EPSI_Bluetooth.Models;
+using EPSI_Bluetooth.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,9 +24,30 @@ namespace EPSI_Bluetooth.Views
     /// </summary>
     public sealed partial class DealDetailPage : Page
     {
+        public DealDetailViewModel ViewModel { get; } = new DealDetailViewModel();
         public DealDetailPage()
         {
             this.InitializeComponent();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            ViewModel.LoadData(e.Parameter as DealModel);
+
+            this.Loaded += DealDetailPage_Loaded;
+        }
+
+        private void DealDetailPage_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            if (WindowStates.CurrentState.Name == "WideState")
+            {
+                if (Views.ShellPage.ShellFrame.CanGoBack)
+                {
+                    Views.ShellPage.ShellFrame.GoBack();
+                }
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,15 @@ namespace EPSI_Bluetooth.ValueConverters
                     DateTime dateTime;
                     if (DateTime.TryParse(strDateTime, out dateTime))
                     {
-                        return dateTime.ToString("dd/MM/yyyy HH:mm");
+                        if (parameter != null)
+                        {
+                            return dateTime.ToString("dd/MM/yyyy");
+                            
+                        }
+                        else
+                        {
+                            return dateTime.ToString("dd/MM/yyyy HH:mm");
+                        }
                     }
 
                 }

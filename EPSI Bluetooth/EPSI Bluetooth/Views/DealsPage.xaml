@@ -13,6 +13,7 @@
 
     <Page.Resources>
         <valueConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <valueConverters:DateTimeConverter x:Key="DateTimeConverter" />
 
         <DataTemplate x:Name="DealListViewTemplate" x:DataType="models:DealModel">
             <Grid HorizontalAlignment="Stretch">
@@ -24,7 +25,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <PersonPicture Initials="SB" 
+                <PersonPicture Initials="{x:Bind LabelFirstLetter}" 
                                Grid.RowSpan="2"
                                Width ="32"
                                Height="32"
@@ -38,7 +39,7 @@
                            Margin="12,6,0,0"/>
                 <TextBlock  Grid.Column="1"
                             Grid.Row="1"
-                            Text="{x:Bind Start_At}"
+                            Text="{x:Bind Start_At, Converter={StaticResource DateTimeConverter}, ConverterParameter=True}"
                             x:Phase="2"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Margin="12,0,0,6"/>
@@ -108,7 +109,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock
-                Text="PageTitle"
+                Text="Promotions"
                 Grid.ColumnSpan="2"
                 FontSize="28" FontWeight="SemiLight" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"
                 Margin="12,0,12,7"/>

@@ -12,6 +12,11 @@ namespace EPSI_Bluetooth.Models
         public string First_Name { get; set; }
         public string Last_Name { get; set; }
         public string FullName { get { return First_Name + " " + Last_Name; } }
+        public string Initials { get
+            {
+                return (First_Name.Substring(0, 1) + Last_Name.Substring(0, 1)).ToUpper();
+            }
+        }
         public string Postal_Code { get; set; }
         public string Email { get; set; }
         public string Bluetooth_Mac_Address { get; set; }

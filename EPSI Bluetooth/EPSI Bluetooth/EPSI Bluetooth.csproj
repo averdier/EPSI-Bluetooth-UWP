@@ -114,6 +114,7 @@
     </Compile>
     <Compile Include="Models\CustomerModel.cs" />
     <Compile Include="Models\DealModel.cs" />
+    <Compile Include="Models\SensorModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\APIService.cs" />
     <Compile Include="Services\NavigationService.cs" />
@@ -124,8 +125,10 @@
     <Compile Include="ViewModels\CustomerDetailViewModel.cs" />
     <Compile Include="ViewModels\CustomersViewModel.cs" />
     <Compile Include="ViewModels\DealAddViewModel.cs" />
+    <Compile Include="ViewModels\DealDetailViewModel.cs" />
     <Compile Include="ViewModels\DealsViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\SensorsViewModel.cs" />
     <Compile Include="Views\CustomerAddPage.xaml.cs">
       <DependentUpon>CustomerAddPage.xaml</DependentUpon>
     </Compile>
@@ -164,6 +167,7 @@
     <None Include="EPSI Bluetooth_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\bluetooth.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

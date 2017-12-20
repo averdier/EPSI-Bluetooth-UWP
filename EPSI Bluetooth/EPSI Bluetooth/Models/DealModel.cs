@@ -12,6 +12,7 @@ namespace EPSI_Bluetooth.Models
         public string Start_At { get; set; }
         public string End_At { get; set; }
         public string Label { get; set; }
+        public string LabelFirstLetter { get { return Label.Substring(0, 1).ToUpper(); } }
         public string Description { get; set; }
     }
 

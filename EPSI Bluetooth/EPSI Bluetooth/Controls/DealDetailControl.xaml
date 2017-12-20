@@ -43,12 +43,12 @@
                 <StackPanel>
                     <toolkit:HeaderedTextBlock 
                                 Header="Date de début"
-                                Text="{x:Bind ControlModel.Item.Start_At, Mode=OneWay, Converter={StaticResource DateTimeConverter}}"
+                                Text="{x:Bind ControlModel.Item.Start_At, Mode=OneWay, Converter={StaticResource DateTimeConverter}, ConverterParameter=True}"
                                 Orientation="Vertical"/>
 
                     <toolkit:HeaderedTextBlock 
                                 Header="Date de fin"
-                                Text="{x:Bind ControlModel.Item.End_At, Mode=OneWay, Converter={StaticResource DateTimeConverter}}"
+                                Text="{x:Bind ControlModel.Item.End_At, Mode=OneWay, Converter={StaticResource DateTimeConverter}, ConverterParameter=True}"
                                 Orientation="Vertical"/>
 
                     <toolkit:HeaderedTextBlock 
