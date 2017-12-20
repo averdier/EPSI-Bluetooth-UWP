@@ -14,6 +14,7 @@
 
     <UserControl.Resources>
         <valueConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <valueConverters:DateTimeConverter x:Key="DateTimeConverter" />
     </UserControl.Resources>
 
     <Grid>
@@ -42,12 +43,12 @@
                 <StackPanel>
                     <toolkit:HeaderedTextBlock 
                                 Header="Date de début"
-                                Text="{x:Bind ControlModel.Item.Start_At, Mode=OneWay}"
+                                Text="{x:Bind ControlModel.Item.Start_At, Mode=OneWay, Converter={StaticResource DateTimeConverter}}"
                                 Orientation="Vertical"/>
 
                     <toolkit:HeaderedTextBlock 
                                 Header="Date de fin"
-                                Text="{x:Bind ControlModel.Item.End_At, Mode=OneWay}"
+                                Text="{x:Bind ControlModel.Item.End_At, Mode=OneWay, Converter={StaticResource DateTimeConverter}}"
                                 Orientation="Vertical"/>
 
                     <toolkit:HeaderedTextBlock 

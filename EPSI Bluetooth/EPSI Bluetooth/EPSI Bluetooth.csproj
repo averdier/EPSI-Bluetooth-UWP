@@ -118,6 +118,8 @@
     <Compile Include="Services\APIService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="ValueConverters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="ValueConverters\DateTimeConverter.cs" />
+    <Compile Include="ValueConverters\TimeConverter.cs" />
     <Compile Include="ViewModels\CustomerAddViewModel.cs" />
     <Compile Include="ViewModels\CustomerDetailViewModel.cs" />
     <Compile Include="ViewModels\CustomersViewModel.cs" />

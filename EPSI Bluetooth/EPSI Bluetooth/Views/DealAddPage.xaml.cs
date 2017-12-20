@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EPSI_Bluetooth.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace EPSI_Bluetooth.Views
     /// </summary>
     public sealed partial class DealAddPage : Page
     {
+        public DealAddViewModel ViewModel { get; } = new DealAddViewModel();
         public DealAddPage()
         {
             this.InitializeComponent();

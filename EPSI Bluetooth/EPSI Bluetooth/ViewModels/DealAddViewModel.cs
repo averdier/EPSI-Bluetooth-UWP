@@ -71,6 +71,8 @@ namespace EPSI_Bluetooth.ViewModels
         public DealAddViewModel()
         {
             _api = new APIService(Helpers.Settings.Username, Helpers.Settings.Password);
+            StartAt = DateTime.Now;
+            EndAt = DateTime.Now;
         }
 
         public async void OnSaveClick(object sender, RoutedEventArgs e)
