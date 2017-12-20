@@ -140,7 +140,7 @@ namespace EPSI_Bluetooth.ViewModels
             {
                 if (_currentState.Name == NarrowStateName)
                 {
-                    //NavigationService.Navigate<Views.NeedDetailPage>(item);
+                    NavigationService.Navigate<Views.CustomerDetailPage>(item);
                 }
                 else
                 {
@@ -149,6 +149,76 @@ namespace EPSI_Bluetooth.ViewModels
                     OnPropertyChanged(nameof(IsViewState));
                 }
             }
+        }
+
+        public async void OnRefreshItemsClick(object sender, RoutedEventArgs e)
+        {
+            await LoadDataAsync(_currentState);
+        }
+
+        public async void OnDeleteItemClick(object sender, RoutedEventArgs e)
+        {
+            if (Selected != null)
+            {
+                var dialog = new Windows.UI.Popups.MessageDialog(
+                    "Voulez vous supprimer le client ?",
+                    "Attention"
+                    );
+                dialog.Commands.Add(new Windows.UI.Popups.UICommand("Oui") { Id = 0 });
+                dialog.Commands.Add(new Windows.UI.Popups.UICommand("Non") { Id = 1 });
+
+                dialog.DefaultCommandIndex = 0;
+                dialog.CancelCommandIndex = 1;
+
+                var result = await dialog.ShowAsync();
+
+                if ((int)result.Id == 0)
+                {
+                    try
+                    {
+                        if (await _api.DeleteCustomerWithRetryAsync(Selected.Id))
+                        {
+                            CustomersItems.Remove(Selected);
+                            Selected = CustomersItems.FirstOrDefault();
+                            OnPropertyChanged(nameof(IsViewState));
+                        }
+                        else
+                        {
+                            var unknowErrorDialog = new Windows.UI.Popups.MessageDialog(
+                                "Une erreur est survenue",
+                                "Erreur");
+                            unknowErrorDialog.Commands.Add(new Windows.UI.Popups.UICommand("Ok") { Id = 0 });
+                            await unknowErrorDialog.ShowAsync();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        var errorDialog = new Windows.UI.Popups.MessageDialog(
+                            ex.Message,
+                            "Erreur");
+                        errorDialog.Commands.Add(new Windows.UI.Popups.UICommand("Ok") { Id = 0 });
+                        await errorDialog.ShowAsync();
+                    }
+                }
+            }
+        }
+
+        public void OnEditItemClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        public void OnAddItemClick(object sender, RoutedEventArgs e)
+        {
+            Views.ShellPage.ShellFrame.Navigate(typeof(Views.CustomerAddPage));
+        }
+
+        public void OnStateChanged(object sender, VisualStateChangedEventArgs e)
+        {
+            _currentState = e.NewState;
+            OnPropertyChanged(nameof(IsViewState));
+            LoadingColumnSpan = (_currentState.Name == NarrowStateName) ? 1 : 2;
+            Debug.WriteLine("StateChanged");
         }
     }
 }

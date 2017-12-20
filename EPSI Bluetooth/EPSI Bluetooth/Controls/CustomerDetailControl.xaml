@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:EPSI_Bluetooth.Controls"
     xmlns:models="using:EPSI_Bluetooth.Models"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:valueConverters="using:EPSI_Bluetooth.ValueConverters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -35,6 +36,38 @@
                                      Message="{x:Bind ControlModel.LoadingMessage, Mode=OneWay}"
                                      IsLoading="{x:Bind ControlModel.IsLoading, Mode=OneWay}"/>
         </Grid>
-        
+
+        <ScrollViewer Grid.Row="1" Visibility="{x:Bind ControlModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=True}">
+            <Grid>
+                <StackPanel>
+                    <toolkit:HeaderedTextBlock 
+                                Header="Nom"
+                                Text="{x:Bind ControlModel.Item.First_Name, Mode=OneWay}"
+                                Orientation="Vertical"/>
+
+                    <toolkit:HeaderedTextBlock 
+                                Header="Prénom"
+                                Text="{x:Bind ControlModel.Item.Last_Name, Mode=OneWay}"
+                                Orientation="Vertical"/>
+                    
+                    <toolkit:HeaderedTextBlock 
+                                Header="Email"
+                                Text="{x:Bind ControlModel.Item.Email, Mode=OneWay}"
+                                Orientation="Vertical"/>
+                    
+                    <toolkit:HeaderedTextBlock 
+                                Header="Téléphone"
+                                Text="{x:Bind ControlModel.Item.Phone_Number, Mode=OneWay}"
+                                Orientation="Vertical"/>
+
+                    <toolkit:HeaderedTextBlock 
+                                Header="Adresse Mac Bluetooth"
+                                Text="{x:Bind ControlModel.Item.Bluetooth_Mac_Address, Mode=OneWay}"
+                                Orientation="Vertical"/>
+                </StackPanel>
+                
+            </Grid>
+        </ScrollViewer>
+
     </Grid>
 </UserControl>

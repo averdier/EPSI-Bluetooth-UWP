@@ -22,9 +22,12 @@ namespace EPSI_Bluetooth.Views
     /// </summary>
     public sealed partial class ShellPage : Page
     {
+        public static Frame ShellFrame;
+
         public ShellPage()
         {
             this.InitializeComponent();
+            ShellFrame = ContentFrame;
         }
 
         private void NavView_Loaded(object sender, RoutedEventArgs e)

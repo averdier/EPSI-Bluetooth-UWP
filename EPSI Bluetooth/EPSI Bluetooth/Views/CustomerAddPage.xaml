@@ -1,0 +1,94 @@
+﻿<Page
+    x:Class="EPSI_Bluetooth.Views.CustomerAddPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EPSI_Bluetooth.Views"
+    xmlns:models="using:EPSI_Bluetooth.Models"
+    xmlns:valueConverters="using:EPSI_Bluetooth.ValueConverters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <valueConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="TitleRow" Height="48"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Text="PageTitle"
+            FontSize="28" FontWeight="SemiLight" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"
+            Margin="12,0,12,7"/>
+
+        <ScrollViewer Grid.Row="1"
+              Margin="10,0,0,0">
+            <Grid>
+                <StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="15,0,15,0">
+                        <TextBlock Text="Nom" 
+                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
+
+                        <TextBox PlaceholderText="Nom" 
+                                 Margin="0,10,0,0"
+                                 Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="15,0,15,0">
+                        <TextBlock Text="Prénom" 
+                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
+
+                        <TextBox PlaceholderText="Prénom" 
+                                 Margin="0,10,0,0"
+                                 Text="{x:Bind ViewModel.LastName, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="15,0,15,0">
+                        <TextBlock Text="Email" 
+                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
+
+                        <TextBox PlaceholderText="Email" 
+                                 Margin="0,10,0,0"
+                                 Text="{x:Bind ViewModel.Email, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="15,0,15,0">
+                        <TextBlock Text="Numéro téléphone mobile" 
+                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
+
+                        <TextBox PlaceholderText="Numéro" 
+                                 Margin="0,10,0,0"
+                                 Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="15,0,15,0">
+                        <TextBlock Text="Adresse Mac Bluetooth" 
+                               Style="{ThemeResource SubtitleTextBlockStyle}"/>
+
+                        <TextBox PlaceholderText="Adresse" 
+                                 Margin="0,10,0,0"
+                                 Text="{x:Bind ViewModel.BluetoothMacAddress, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <CommandBar Grid.Row="2">
+            <AppBarButton x:Name="AddBtn"
+                          Label="Build"
+                          Icon="Save" 
+                          IsEnabled="{x:Bind ViewModel.SaveBtn_IsEnabled, Mode=OneWay}"
+                          Click="{x:Bind ViewModel.OnSaveClick}"/>
+            <AppBarButton x:Name="CancelBtn" 
+                          Label="Cancel" 
+                          Icon="Cancel"
+                          Click="{x:Bind ViewModel.OnCancelClick}"/>
+        </CommandBar>
+    </Grid>
+</Page>
