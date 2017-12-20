@@ -1,4 +1,5 @@
-﻿using EPSI_Bluetooth.Models;
+﻿using EPSI_Bluetooth.ControlModels;
+using EPSI_Bluetooth.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,9 +28,24 @@ namespace EPSI_Bluetooth.Controls
         }
 
         public static DependencyProperty MasterMenuItemProperty = DependencyProperty.Register("MasterMenuItem", typeof(DealModel), typeof(DealDetailControl), new PropertyMetadata(null));
+        public DealControlModel ControlModel { get; private set; }
         public DealDetailControl()
         {
             this.InitializeComponent();
+            ControlModel = new DealControlModel();
+            this.RegisterPropertyChangedCallback(MasterMenuItemProperty, OnMasterMenuItemPropertyChanged);
+        }
+
+        private void OnMasterMenuItemPropertyChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (dp == MasterMenuItemProperty)
+            {
+                ControlModel.OnMasterItemChanged(MasterMenuItem);
+            }
+            else
+            {
+                ControlModel.Item = null;
+            }
         }
     }
 }

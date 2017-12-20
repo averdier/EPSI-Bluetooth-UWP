@@ -176,7 +176,7 @@ namespace EPSI_Bluetooth.ViewModels
                 {
                     try
                     {
-                        if (await _api.DeleteCustomerWithRetryAsync(Selected.Id))
+                        if (await _api.DeleteDealWithRetryAsync(Selected.Id))
                         {
                             DealsItems.Remove(Selected);
                             Selected = DealsItems.FirstOrDefault();

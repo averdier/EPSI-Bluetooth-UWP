@@ -362,5 +362,92 @@ namespace EPSI_Bluetooth.Services
             }
             return success;
         }
+
+        public async Task<DealModel> GetDealFromIdWithRetryAsync(string deal_id, bool retry = true)
+        {
+            DealModel deal = null;
+            try
+            {
+                deal = await GetDealFromIdAsync(_token, deal_id);
+            }
+            catch (AuthorizationException)
+            {
+                if (retry)
+                {
+                    await RenewAuthToken();
+                    deal = await GetDealFromIdAsync(_token, deal_id);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return deal;
+        }
+
+        public async Task<DealModel> GetDealFromIdAsync(string token, string deal_id)
+        {
+            DealModel deal = null;
+
+            HttpClient client = this.GetHttpClientToken(token);
+
+            HttpResponseMessage response = await client.GetAsync(_serverUrl + "deals/" + deal_id);
+
+            switch (response.StatusCode)
+            {
+                case System.Net.HttpStatusCode.OK:
+                    var content = await response.Content.ReadAsStringAsync();
+                    deal = JsonConvert.DeserializeObject<DealModel>(content);
+                    break;
+
+                case System.Net.HttpStatusCode.Unauthorized:
+                    throw new AuthorizationException("Unknown token");
+            }
+            return deal;
+        }
+
+        public async Task<DealModel> PostDealAsync(string token, DealPostModel model)
+        {
+            HttpClient client = this.GetHttpClientToken(token);
+
+            Uri resourceUri = new Uri(_serverUrl + "deals/");
+
+            string jsonObject = "";
+            Debug.WriteLine(model);
+            jsonObject = JsonConvert.SerializeObject(model);
+
+            Debug.WriteLine("ici");
+
+            var response = await client.PostAsync(resourceUri, new System.Net.Http.StringContent(jsonObject, System.Text.Encoding.UTF8, "application/json"));
+
+            var strResponse = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine(strResponse);
+            var deal = JsonConvert.DeserializeObject<DealModel>(strResponse);
+
+            return deal;
+        }
+
+        public async Task<DealModel> PostDealWithRetryAsync(DealPostModel model, bool retry = true)
+        {
+            DealModel deal = null;
+            try
+            {
+                deal = await PostDealAsync(_token, model);
+            }
+            catch (Exception)
+            {
+                if (retry)
+                {
+                    await RenewAuthToken();
+                    deal = await PostDealAsync(_token, model);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return deal;
+        }
     }
 }
