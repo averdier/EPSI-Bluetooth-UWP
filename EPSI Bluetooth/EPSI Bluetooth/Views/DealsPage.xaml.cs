@@ -1,5 +1,7 @@
-﻿using System;
+﻿using EPSI_Bluetooth.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -22,9 +24,18 @@ namespace EPSI_Bluetooth.Views
     /// </summary>
     public sealed partial class DealsPage : Page
     {
+        public DealsViewModel ViewModel { get; } = new DealsViewModel();
+
         public DealsPage()
         {
             this.InitializeComponent();
+        }
+
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            await ViewModel.LoadDataAsync(WindowStates.CurrentState);
+            Debug.WriteLine(ViewModel.IsLoading);
         }
     }
 }

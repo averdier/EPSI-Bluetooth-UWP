@@ -275,5 +275,92 @@ namespace EPSI_Bluetooth.Services
 
             return customer;
         }
+
+        public async Task<DealContainer> GetDealContainerAsync(string token)
+        {
+            DealContainer container = null;
+
+            HttpClient client = this.GetHttpClientToken(token);
+
+            HttpResponseMessage response = await client.GetAsync(_serverUrl + "deals/");
+
+            switch (response.StatusCode)
+            {
+                case System.Net.HttpStatusCode.OK:
+                    var content = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine(content);
+                    container = JsonConvert.DeserializeObject<DealContainer>(content);
+                    break;
+
+                case System.Net.HttpStatusCode.Unauthorized:
+                    throw new AuthorizationException("Unknown token");
+            }
+            return container;
+        }
+
+        public async Task<DealContainer> GetDealContainerWithRetryAsync(bool retry = true)
+        {
+            DealContainer container = null;
+            try
+            {
+                container = await GetDealContainerAsync(_token);
+            }
+            catch (AuthorizationException)
+            {
+                if (retry)
+                {
+                    await RenewAuthToken();
+                    container = await GetDealContainerAsync(_token);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return container;
+        }
+
+        public async Task<bool> DeleteDealAsync(string token, string deal_id)
+        {
+            var success = false;
+
+            HttpClient client = this.GetHttpClientToken(token);
+
+            HttpResponseMessage response = await client.DeleteAsync(_serverUrl + "deals/" + deal_id);
+
+            switch (response.StatusCode)
+            {
+                case System.Net.HttpStatusCode.NoContent:
+                    success = true;
+                    break;
+
+                case System.Net.HttpStatusCode.Unauthorized:
+                    throw new AuthorizationException("Unknown token");
+            }
+
+            return success;
+        }
+
+        public async Task<Boolean> DeleteDealWithRetryAsync(string deal_id, bool retry = true)
+        {
+            var success = false;
+            try
+            {
+                success = await DeleteDealAsync(_token, deal_id);
+            }
+            catch (AuthorizationException)
+            {
+                if (retry)
+                {
+                    await RenewAuthToken();
+                    success = await DeleteDealAsync(_token, deal_id);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return success;
+        }
     }
 }

@@ -8,5 +8,14 @@ namespace EPSI_Bluetooth.Models
 {
     public class DealModel
     {
+        public string Id { get; set; }
+        public string Start_At { get; set; }
+        public string End_At { get; set; }
+        public string Label { get; set; }
+    }
+
+    public class DealContainer
+    {
+        public List<DealModel> Deals { get; set; }
     }
 }

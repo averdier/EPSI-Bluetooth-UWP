@@ -3,11 +3,172 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:EPSI_Bluetooth.Views"
+    xmlns:models="using:EPSI_Bluetooth.Models"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:controls="using:EPSI_Bluetooth.Controls"
+    xmlns:valueConverters="using:EPSI_Bluetooth.ValueConverters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Text="DealsPage" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    <Page.Resources>
+        <valueConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+        <DataTemplate x:Name="DealListViewTemplate" x:DataType="models:DealModel">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <PersonPicture Initials="SB" 
+                               Grid.RowSpan="2"
+                               Width ="32"
+                               Height="32"
+                               Margin="6"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="1"
+                           Text="{x:Bind Label}" 
+                           x:Phase="1"  
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           Margin="12,6,0,0"/>
+                <TextBlock  Grid.Column="1"
+                            Grid.Row="1"
+                            Text="{x:Bind Start_At}"
+                            x:Phase="2"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Margin="12,0,0,6"/>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid x:Name="ContentArea"
+          Margin="0">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="MasterColumn" />
+            <ColumnDefinition x:Name="DetailColumn" />
+        </Grid.ColumnDefinitions>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="WindowStates" CurrentStateChanged="{x:Bind ViewModel.OnStateChanged}">
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="640"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MasterColumn.Width" Value="320" />
+                        <Setter Target="DetailColumn.Width" Value="*" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MasterRow.Height" Value="Auto"/>
+                        <Setter Target="MasterArea.Background" Value="{ThemeResource SystemControlBackgroundAltHighBrush}"/>
+                        <Setter Target="MasterColumn.Width" Value="*" />
+                        <Setter Target="DetailColumn.Width" Value="Auto" />
+                        <Setter Target="DetailContentPresenter.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <ContentPresenter
+            x:Name="LoadingContentPresenter"
+            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Grid.Row="0"
+            Grid.ColumnSpan="{x:Bind ViewModel.LoadingColumnSpan}">
+
+            <controls:LoadingControl x:Name="LoadingControl"
+                                     Message="{x:Bind ViewModel.LoadingMessage, Mode=OneWay}"
+                                     IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
+        </ContentPresenter>
+
+        <Grid
+            x:Name="MasterArea"
+            Grid.Row="0"
+            Grid.Column="0"
+            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=True}">
+
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="MasterRow" Height="48"/>
+                <RowDefinition x:Name="SearchRow" Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                Text="PageTitle"
+                Grid.ColumnSpan="2"
+                FontSize="28" FontWeight="SemiLight" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"
+                Margin="12,0,12,7"/>
+
+            <toolkit:PullToRefreshListView
+                    Grid.Row="2"
+                    x:Name="ListView"
+                    Background="White"
+                    OverscrollLimit="0.4"
+                    PullThreshold="100"
+                    IsItemClickEnabled="True"
+                    ItemsSource="{x:Bind ViewModel.DealsItems}"
+                    ItemTemplate="{StaticResource DealListViewTemplate }"
+                    ItemClick="{x:Bind ViewModel.OnItemClick}"
+                    IsPullToRefreshWithMouseEnabled="True">
+
+                <toolkit:PullToRefreshListView.PullToRefreshContent>
+                    <TextBlock FontSize="16"
+                               Opacity="0.5"
+                               Text="Pull down to refresh data" />
+                </toolkit:PullToRefreshListView.PullToRefreshContent>
+            </toolkit:PullToRefreshListView>
+
+        </Grid>
+        
+        <ContentPresenter 
+                x:Name="DetailContentPresenter"
+                Visibility="{x:Bind ViewModel.IsViewState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Grid.Row="0"
+                Grid.Column="1"
+                BorderThickness="1,0,0,0"
+                Padding="24,0,0,0"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+            <controls:DealDetailControl x:Name="DetailControl" MasterMenuItem="{x:Bind ViewModel.Selected, Mode=OneWay}"/>
+        </ContentPresenter>
+
+        <CommandBar Grid.Row="1"
+                    Grid.ColumnSpan="2">
+            <AppBarButton x:Name="RefreshItemsBtn"
+                          Label="Refresh"
+                          Icon="Refresh"
+                          Click="{x:Bind ViewModel.OnRefreshItemsClick}"/>
+
+            <AppBarButton x:Name="AddItemBtn" 
+                          Label="Add Item" 
+                          Icon="Add"
+                          Click="{x:Bind ViewModel.OnAddItemClick}"/>
+
+            <AppBarButton x:Name="DeleteItemBtn" 
+                          Label="Delete Item" 
+                          Icon="Delete" 
+                          Click="{x:Bind ViewModel.OnDeleteItemClick}"
+                          Visibility="{x:Bind ViewModel.IsViewState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <AppBarButton x:Name="EditItemBtn"
+                          Label="Edit item"
+                          Icon="Edit" 
+                          Click="{x:Bind ViewModel.OnEditItemClick}"
+                          Visibility="{x:Bind ViewModel.IsViewState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        </CommandBar>
     </Grid>
+
 </Page>

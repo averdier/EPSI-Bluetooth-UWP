@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EPSI_Bluetooth.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,13 @@ namespace EPSI_Bluetooth.Controls
 {
     public sealed partial class DealDetailControl : UserControl
     {
+        public DealModel MasterMenuItem
+        {
+            get { return GetValue(MasterMenuItemProperty) as DealModel; }
+            set { SetValue(MasterMenuItemProperty, value); }
+        }
+
+        public static DependencyProperty MasterMenuItemProperty = DependencyProperty.Register("MasterMenuItem", typeof(DealModel), typeof(DealDetailControl), new PropertyMetadata(null));
         public DealDetailControl()
         {
             this.InitializeComponent();
