@@ -140,7 +140,7 @@ namespace EPSI_Bluetooth.ViewModels
             {
                 if (_currentState.Name == NarrowStateName)
                 {
-                    NavigationService.Navigate<Views.CustomerDetailPage>(item);
+                    Views.ShellPage.ShellFrame.Navigate(typeof(Views.CustomerDetailPage), item);
                 }
                 else
                 {

@@ -50,27 +50,44 @@
           Margin="0">
 
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="TitleRow" Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="MasterColumn" Width="320" />
-            <ColumnDefinition x:Name="DetailColumn" Width="*" />
+            <ColumnDefinition x:Name="MasterColumn" />
+            <ColumnDefinition x:Name="DetailColumn" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock
-            x:Name="TitlePage"
-            Text="PageTitle"
-            Grid.ColumnSpan="2"
-            FontSize="28" FontWeight="SemiLight" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"
-            Margin="12,0,12,7" Visibility="Collapsed"/>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="WindowStates" CurrentStateChanged="{x:Bind ViewModel.OnStateChanged}">
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="640"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MasterColumn.Width" Value="320" />
+                        <Setter Target="DetailColumn.Width" Value="*" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MasterRow.Height" Value="Auto"/>
+                        <Setter Target="MasterArea.Background" Value="{ThemeResource SystemControlBackgroundAltHighBrush}"/>
+                        <Setter Target="MasterColumn.Width" Value="*" />
+                        <Setter Target="DetailColumn.Width" Value="Auto" />
+                        <Setter Target="DetailContentPresenter.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
 
         <ContentPresenter
             x:Name="LoadingContentPresenter"
             Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-            Grid.Row="1"
-            Grid.RowSpan="2"
+            Grid.Row="0"
             Grid.ColumnSpan="{x:Bind ViewModel.LoadingColumnSpan}">
 
             <controls:LoadingControl x:Name="LoadingControl"
@@ -81,7 +98,7 @@
 
         <Grid
             x:Name="MasterArea"
-            Grid.Row="1"
+            Grid.Row="0"
             Grid.Column="0"
             Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=True}">
 
@@ -121,7 +138,7 @@
         <ContentPresenter 
                 x:Name="DetailContentPresenter"
                 Visibility="{x:Bind ViewModel.IsViewState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Grid.Row="1"
+                Grid.Row="0"
                 Grid.Column="1"
                 BorderThickness="1,0,0,0"
                 Padding="24,0,0,0"
@@ -129,13 +146,13 @@
             <controls:CustomerDetailControl x:Name="DetailControl" MasterMenuItem="{x:Bind ViewModel.Selected, Mode=OneWay}"/>
         </ContentPresenter>
 
-        <CommandBar Grid.Row="2"
+        <CommandBar Grid.Row="1"
                     Grid.ColumnSpan="2">
             <AppBarButton x:Name="RefreshItemsBtn"
                           Label="Refresh"
                           Icon="Refresh"
                           Click="{x:Bind ViewModel.OnRefreshItemsClick}"/>
-            
+
             <AppBarButton x:Name="AddItemBtn" 
                           Label="Add Item" 
                           Icon="Add"
@@ -154,34 +171,7 @@
                           Visibility="{x:Bind ViewModel.IsViewState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </CommandBar>
 
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="WindowStates" 
-                              CurrentStateChanged="{x:Bind ViewModel.OnStateChanged}">
-                <VisualState x:Name="WideState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="640"/>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="MasterColumn.Width" Value="320" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="NarrowState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="TitlePage.Margin" Value="48,0,12,7"/>
-                        <Setter Target="TitleRow.Height" Value="48"/>
-                        <Setter Target="MasterRow.Height" Value="Auto"/>
-                        <Setter Target="TitlePage.Visibility" Value="Visible"/>
-                        <Setter Target="Title.Visibility" Value="Collapsed"/>
-                        <Setter Target="MasterArea.Background" Value="{ThemeResource SystemControlBackgroundAltHighBrush}"/>
-                        <Setter Target="MasterColumn.Width" Value="*" />
-                        <Setter Target="DetailColumn.Width" Value="0" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
+        
 
     </Grid>
 </Page>

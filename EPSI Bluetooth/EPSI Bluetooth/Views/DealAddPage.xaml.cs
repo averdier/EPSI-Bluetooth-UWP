@@ -1,7 +1,5 @@
-﻿using EPSI_Bluetooth.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -22,25 +20,11 @@ namespace EPSI_Bluetooth.Views
     /// <summary>
     /// Une page vide peut être utilisée seule ou constituer une page de destination au sein d'un frame.
     /// </summary>
-    public sealed partial class CustomersPage : Page
+    public sealed partial class DealAddPage : Page
     {
-        public CustomersViewModel ViewModel { get; } = new CustomersViewModel();
-        public CustomersPage()
+        public DealAddPage()
         {
             this.InitializeComponent();
-
-        }
-
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            await ViewModel.LoadDataAsync(WindowStates.CurrentState);
-            Debug.WriteLine(ViewModel.IsLoading);
-        }
-
-        private void WindowStates_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
-        {
-            Debug.WriteLine("StateChanged");
         }
     }
 }
