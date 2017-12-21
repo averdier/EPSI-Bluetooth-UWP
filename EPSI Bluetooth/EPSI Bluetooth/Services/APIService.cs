@@ -493,5 +493,134 @@ namespace EPSI_Bluetooth.Services
             }
             return container;
         }
+        public async Task<SensorModel> GetSensorFromIdWithRetryAsync(string sensor_id, bool retry = true)
+        {
+            SensorModel sensor = null;
+            try
+            {
+                sensor = await GetSensorFromIdAsync(_token, sensor_id);
+            }
+            catch (AuthorizationException)
+            {
+                if (retry)
+                {
+                    await RenewAuthToken();
+                    sensor = await GetSensorFromIdAsync(_token, sensor_id);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return sensor;
+        }
+
+        public async Task<SensorModel> GetSensorFromIdAsync(string token, string sensor_id)
+        {
+            SensorModel sensor = null;
+
+            HttpClient client = this.GetHttpClientToken(token);
+
+            HttpResponseMessage response = await client.GetAsync(_serverUrl + "sensors/" + sensor_id);
+
+            switch (response.StatusCode)
+            {
+                case System.Net.HttpStatusCode.OK:
+                    var content = await response.Content.ReadAsStringAsync();
+                    sensor = JsonConvert.DeserializeObject<SensorModel>(content);
+                    break;
+
+                case System.Net.HttpStatusCode.Unauthorized:
+                    throw new AuthorizationException("Unknown token");
+            }
+            return sensor;
+        }
+
+        public async Task<bool> DeleteSensorAsync(string token, string sensor_id)
+        {
+            var success = false;
+
+            HttpClient client = this.GetHttpClientToken(token);
+
+            HttpResponseMessage response = await client.DeleteAsync(_serverUrl + "sensors/" + sensor_id);
+
+            switch (response.StatusCode)
+            {
+                case System.Net.HttpStatusCode.NoContent:
+                    success = true;
+                    break;
+
+                case System.Net.HttpStatusCode.Unauthorized:
+                    throw new AuthorizationException("Unknown token");
+            }
+
+            return success;
+        }
+
+        public async Task<Boolean> DeleteSensorWithRetryAsync(string sensor_id, bool retry = true)
+        {
+            var success = false;
+            try
+            {
+                success = await DeleteSensorAsync(_token, sensor_id);
+            }
+            catch (AuthorizationException)
+            {
+                if (retry)
+                {
+                    await RenewAuthToken();
+                    success = await DeleteSensorAsync(_token, sensor_id);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return success;
+        }
+
+        public async Task<SensorModel> PostSensorAsync(string token, SensorPostModel model)
+        {
+            HttpClient client = this.GetHttpClientToken(token);
+
+            Uri resourceUri = new Uri(_serverUrl + "sensors/");
+
+            string jsonObject = "";
+            Debug.WriteLine(model);
+            jsonObject = JsonConvert.SerializeObject(model);
+
+            Debug.WriteLine("ici");
+
+            var response = await client.PostAsync(resourceUri, new System.Net.Http.StringContent(jsonObject, System.Text.Encoding.UTF8, "application/json"));
+
+            var strResponse = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine(strResponse);
+            var sensor = JsonConvert.DeserializeObject<SensorModel>(strResponse);
+
+            return sensor;
+        }
+
+        public async Task<SensorModel> PostSensorWithRetryAsync(SensorPostModel model, bool retry = true)
+        {
+            SensorModel sensor = null;
+            try
+            {
+                sensor = await PostSensorAsync(_token, model);
+            }
+            catch (Exception)
+            {
+                if (retry)
+                {
+                    await RenewAuthToken();
+                    sensor = await PostSensorAsync(_token, model);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return sensor;
+        }
     }
 }

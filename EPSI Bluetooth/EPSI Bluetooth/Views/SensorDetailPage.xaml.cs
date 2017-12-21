@@ -1,7 +1,7 @@
-﻿using EPSI_Bluetooth.ViewModels;
+﻿using EPSI_Bluetooth.Models;
+using EPSI_Bluetooth.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -22,20 +22,32 @@ namespace EPSI_Bluetooth.Views
     /// <summary>
     /// Une page vide peut être utilisée seule ou constituer une page de destination au sein d'un frame.
     /// </summary>
-    public sealed partial class SensorsPage : Page
+    public sealed partial class SensorDetailPage : Page
     {
-        public SensorsViewModel ViewModel { get; } = new SensorsViewModel();
-
-        public SensorsPage()
+        public SensorDetailViewModel ViewModel { get; } = new SensorDetailViewModel();
+        public SensorDetailPage()
         {
             this.InitializeComponent();
         }
 
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            await ViewModel.LoadDataAsync(WindowStates.CurrentState);
-            Debug.WriteLine(ViewModel.IsLoading);
+
+            ViewModel.LoadData(e.Parameter as SensorModel);
+
+            this.Loaded += SensorDetailPage_Loaded;
+        }
+
+        private void SensorDetailPage_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            if (WindowStates.CurrentState.Name == "WideState")
+            {
+                if (Views.ShellPage.ShellFrame.CanGoBack)
+                {
+                    Views.ShellPage.ShellFrame.GoBack();
+                }
+            }
         }
     }
 }

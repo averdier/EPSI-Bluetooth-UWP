@@ -14,61 +14,156 @@
     <Page.Resources>
         <valueConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
-        <DataTemplate x:Key="SensorGridViewTemplate" x:DataType="models:SensorModel">
-            <Grid Width="190" Height="130" Margin="4,4,4,8">
+        <DataTemplate x:Name="SensorListViewTemplate" x:DataType="models:SensorModel">
+            <Grid HorizontalAlignment="Stretch">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-
-                <TextBlock
-                    Style="{StaticResource BaseTextBlockStyle}"
-                    Width="186"
-                    Margin="8,4"
-                    HorizontalAlignment="Left"
-                    Text="{x:Bind Id}" />
-                <Image
-                    Grid.Row="1"
-                    Width="36"
-                    Margin="8,0,8,8"
-                    VerticalAlignment="Center"
-                    Source="{x:Bind ImagePath}" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <PersonPicture Initials="B" 
+                               Grid.RowSpan="2"
+                               Width ="32"
+                               Height="32"
+                               Margin="6"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="1"
+                           Text="{x:Bind Id}" 
+                           x:Phase="1"  
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           Margin="12,6,0,0"/>
             </Grid>
         </DataTemplate>
+
     </Page.Resources>
 
     <Grid x:Name="ContentArea"
           Margin="0">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="MasterColumn" />
+            <ColumnDefinition x:Name="DetailColumn" />
+        </Grid.ColumnDefinitions>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="WindowStates" CurrentStateChanged="{x:Bind ViewModel.OnStateChanged}">
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="640"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MasterColumn.Width" Value="320" />
+                        <Setter Target="DetailColumn.Width" Value="*" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MasterRow.Height" Value="Auto"/>
+                        <Setter Target="MasterArea.Background" Value="{ThemeResource SystemControlBackgroundAltHighBrush}"/>
+                        <Setter Target="MasterColumn.Width" Value="*" />
+                        <Setter Target="DetailColumn.Width" Value="Auto" />
+                        <Setter Target="DetailContentPresenter.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
 
         <ContentPresenter
             x:Name="LoadingContentPresenter"
             Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-            Grid.Row="0">
+            Grid.Row="0"
+            Grid.ColumnSpan="{x:Bind ViewModel.LoadingColumnSpan}">
 
             <controls:LoadingControl x:Name="LoadingControl"
                                      Message="{x:Bind ViewModel.LoadingMessage, Mode=OneWay}"
                                      IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
         </ContentPresenter>
 
-        <TextBlock
+        <Grid
+            x:Name="MasterArea"
+            Grid.Row="0"
+            Grid.Column="0"
+            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=True}">
+
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="MasterRow" Height="48"/>
+                <RowDefinition x:Name="SearchRow" Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock
                 Text="Sondes"
+                Grid.ColumnSpan="2"
                 FontSize="28" FontWeight="SemiLight" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"
                 Margin="12,0,12,7"/>
 
+            <toolkit:PullToRefreshListView
+                    Grid.Row="2"
+                    x:Name="ListView"
+                    Background="White"
+                    OverscrollLimit="0.4"
+                    PullThreshold="100"
+                    IsItemClickEnabled="True"
+                    ItemsSource="{x:Bind ViewModel.SensorsItems}"
+                    ItemTemplate="{StaticResource SensorListViewTemplate }"
+                    ItemClick="{x:Bind ViewModel.OnItemClick}"
+                    IsPullToRefreshWithMouseEnabled="True">
 
-        <GridView ItemsSource="{x:Bind ViewModel.SensorsItems}"
-                  ItemTemplate="{StaticResource SensorGridViewTemplate}"
-                  IsItemClickEnabled="True"
-                  SelectionMode="Single"
-                  SelectionChanged="GridView_SelectionChanged"
-                  ItemClick="GridView_ItemClick"
-                  Grid.Row="1"/>
+                <toolkit:PullToRefreshListView.PullToRefreshContent>
+                    <TextBlock FontSize="16"
+                               Opacity="0.5"
+                               Text="Pull down to refresh data" />
+                </toolkit:PullToRefreshListView.PullToRefreshContent>
+            </toolkit:PullToRefreshListView>
+
+        </Grid>
+
+        <ContentPresenter 
+                x:Name="DetailContentPresenter"
+                Visibility="{x:Bind ViewModel.IsViewState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Grid.Row="0"
+                Grid.Column="1"
+                BorderThickness="1,0,0,0"
+                Padding="24,0,0,0"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+            <controls:SensorDetailControl x:Name="DetailControl" MasterMenuItem="{x:Bind ViewModel.Selected, Mode=OneWay}"/>
+        </ContentPresenter>
+
+        <CommandBar Grid.Row="1"
+                    Grid.ColumnSpan="2">
+            <AppBarButton x:Name="RefreshItemsBtn"
+                          Label="Refresh"
+                          Icon="Refresh"
+                          Click="{x:Bind ViewModel.OnRefreshItemsClick}"/>
+
+            <AppBarButton x:Name="AddItemBtn" 
+                          Label="Add Item" 
+                          Icon="Add"
+                          Click="{x:Bind ViewModel.OnAddItemClick}"/>
+
+            <AppBarButton x:Name="DeleteItemBtn" 
+                          Label="Delete Item" 
+                          Icon="Delete" 
+                          Click="{x:Bind ViewModel.OnDeleteItemClick}"
+                          Visibility="{x:Bind ViewModel.IsViewState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <AppBarButton x:Name="EditItemBtn"
+                          Label="Edit item"
+                          Icon="Edit" 
+                          Click="{x:Bind ViewModel.OnEditItemClick}"
+                          Visibility="{x:Bind ViewModel.IsViewState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        </CommandBar>
 
     </Grid>
 </Page>
