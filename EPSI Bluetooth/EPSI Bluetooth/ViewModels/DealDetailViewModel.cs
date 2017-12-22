@@ -54,6 +54,11 @@ namespace EPSI_Bluetooth.ViewModels
 
         }
 
+        public async void OnSendItemClick(object sender, RoutedEventArgs e)
+        {
+            Views.ShellPage.ShellFrame.Navigate(typeof(Views.DealSendPage), Item);
+        }
+
         public async void OnDeleteItemClick(object sender, RoutedEventArgs e)
         {
 

@@ -22,7 +22,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock
-            Text="PageTitle"
+            Text="Ajouter promotion"
             FontSize="28" FontWeight="SemiLight" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"
             Margin="12,0,12,7"/>
 

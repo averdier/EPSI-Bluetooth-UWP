@@ -142,8 +142,9 @@
 
         <CommandBar Grid.Row="1"
                     Grid.ColumnSpan="2">
-            <AppBarButton x:Name="RefreshItemsBtn"
-                          Label="Refresh"
+
+            <AppBarButton x:Name="RefreshItemBtn" 
+                          Label="Refresh" 
                           Icon="Refresh"
                           Click="{x:Bind ViewModel.OnRefreshItemsClick}"/>
 
@@ -158,11 +159,7 @@
                           Click="{x:Bind ViewModel.OnDeleteItemClick}"
                           Visibility="{x:Bind ViewModel.IsViewState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-            <AppBarButton x:Name="EditItemBtn"
-                          Label="Edit item"
-                          Icon="Edit" 
-                          Click="{x:Bind ViewModel.OnEditItemClick}"
-                          Visibility="{x:Bind ViewModel.IsViewState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            
         </CommandBar>
 
     </Grid>

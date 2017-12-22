@@ -119,6 +119,7 @@
     <Compile Include="Models\CustomerModel.cs" />
     <Compile Include="Models\DealModel.cs" />
     <Compile Include="Models\SensorModel.cs" />
+    <Compile Include="Models\TaskModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\APIService.cs" />
     <Compile Include="Services\NavigationService.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="ViewModels\CustomersViewModel.cs" />
     <Compile Include="ViewModels\DealAddViewModel.cs" />
     <Compile Include="ViewModels\DealDetailViewModel.cs" />
+    <Compile Include="ViewModels\DealSendViewModel.cs" />
     <Compile Include="ViewModels\DealsViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\SensorAddViewModel.cs" />
@@ -149,6 +151,9 @@
     </Compile>
     <Compile Include="Views\DealDetailPage.xaml.cs">
       <DependentUpon>DealDetailPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DealSendPage.xaml.cs">
+      <DependentUpon>DealSendPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DealsPage.xaml.cs">
       <DependentUpon>DealsPage.xaml</DependentUpon>
@@ -231,6 +236,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DealDetailPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DealSendPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

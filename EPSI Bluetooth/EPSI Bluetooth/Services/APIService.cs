@@ -109,17 +109,20 @@ namespace EPSI_Bluetooth.Services
             HttpClient client = this.GetHttpClientToken(token);
 
             HttpResponseMessage response = await client.GetAsync(_serverUrl + "customers/");
-
+            string content = await response.Content.ReadAsStringAsync();
             switch (response.StatusCode)
             {
                 case System.Net.HttpStatusCode.OK:
-                    var content = await response.Content.ReadAsStringAsync();
+                    
                     Debug.WriteLine(content);
                     container = JsonConvert.DeserializeObject<CustomerContainer>(content);
                     break;
 
                 case System.Net.HttpStatusCode.Unauthorized:
                     throw new AuthorizationException("Unknown token");
+
+                default:
+                    throw new Exception(content);
             }
             return container;
         }
@@ -143,6 +146,11 @@ namespace EPSI_Bluetooth.Services
                     throw;
                 }
             }
+            catch (Exception)
+            {
+                throw;
+            }
+
             return container;
         }
 
@@ -165,6 +173,10 @@ namespace EPSI_Bluetooth.Services
                     throw;
                 }
             }
+            catch (Exception)
+            {
+                throw;
+            }
             return need;
         }
 
@@ -175,16 +187,19 @@ namespace EPSI_Bluetooth.Services
             HttpClient client = this.GetHttpClientToken(token);
 
             HttpResponseMessage response = await client.GetAsync(_serverUrl + "customers/" + customer_id);
-
+            string content = await response.Content.ReadAsStringAsync();
             switch (response.StatusCode)
             {
                 case System.Net.HttpStatusCode.OK:
-                    var content = await response.Content.ReadAsStringAsync();
+                    
                     need = JsonConvert.DeserializeObject<CustomerModel>(content);
                     break;
 
                 case System.Net.HttpStatusCode.Unauthorized:
                     throw new AuthorizationException("Unknown token");
+
+                default:
+                    throw new Exception(content);
             }
             return need;
         }
@@ -196,7 +211,7 @@ namespace EPSI_Bluetooth.Services
             HttpClient client = this.GetHttpClientToken(token);
 
             HttpResponseMessage response = await client.DeleteAsync(_serverUrl + "customers/" + customer_id);
-
+            string content = await response.Content.ReadAsStringAsync();
             switch (response.StatusCode)
             {
                 case System.Net.HttpStatusCode.NoContent:
@@ -205,6 +220,9 @@ namespace EPSI_Bluetooth.Services
 
                 case System.Net.HttpStatusCode.Unauthorized:
                     throw new AuthorizationException("Unknown token");
+
+                default:
+                    throw new Exception(content);
             }
 
             return success;
@@ -229,6 +247,10 @@ namespace EPSI_Bluetooth.Services
                     throw;
                 }
             }
+            catch (Exception)
+            {
+                throw;
+            }
             return success;
         }
 
@@ -247,6 +269,22 @@ namespace EPSI_Bluetooth.Services
             var response = await client.PostAsync(resourceUri, new System.Net.Http.StringContent(jsonObject, System.Text.Encoding.UTF8, "application/json"));
 
             var strResponse = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine("Post response");
+            Debug.WriteLine(strResponse);
+
+            switch (response.StatusCode)
+            {
+                case System.Net.HttpStatusCode.Unauthorized:
+                    throw new AuthorizationException("Wrong token");
+
+                case System.Net.HttpStatusCode.BadRequest:
+                    throw new Exception(strResponse);
+
+                case System.Net.HttpStatusCode.InternalServerError:
+                    throw new Exception("Server error");
+
+            }
+
             Debug.WriteLine(strResponse);
             var need = JsonConvert.DeserializeObject<CustomerModel>(strResponse);
 
@@ -260,7 +298,7 @@ namespace EPSI_Bluetooth.Services
             {
                 customer = await PostCustomerAsync(_token, model);
             }
-            catch (Exception)
+            catch (AuthorizationException)
             {
                 if (retry)
                 {
@@ -283,17 +321,20 @@ namespace EPSI_Bluetooth.Services
             HttpClient client = this.GetHttpClientToken(token);
 
             HttpResponseMessage response = await client.GetAsync(_serverUrl + "deals/");
-
+            var content = await response.Content.ReadAsStringAsync();
             switch (response.StatusCode)
             {
                 case System.Net.HttpStatusCode.OK:
-                    var content = await response.Content.ReadAsStringAsync();
+                    
                     Debug.WriteLine(content);
                     container = JsonConvert.DeserializeObject<DealContainer>(content);
                     break;
 
                 case System.Net.HttpStatusCode.Unauthorized:
                     throw new AuthorizationException("Unknown token");
+
+                default:
+                    throw new Exception(content);
             }
             return container;
         }
@@ -316,6 +357,10 @@ namespace EPSI_Bluetooth.Services
                 {
                     throw;
                 }
+            }
+            catch (Exception)
+            {
+                throw;
             }
             return container;
         }
@@ -360,6 +405,10 @@ namespace EPSI_Bluetooth.Services
                     throw;
                 }
             }
+            catch (Exception)
+            {
+                throw;
+            }
             return success;
         }
 
@@ -382,6 +431,10 @@ namespace EPSI_Bluetooth.Services
                     throw;
                 }
             }
+            catch (Exception)
+            {
+                throw;
+            }
             return deal;
         }
 
@@ -392,16 +445,18 @@ namespace EPSI_Bluetooth.Services
             HttpClient client = this.GetHttpClientToken(token);
 
             HttpResponseMessage response = await client.GetAsync(_serverUrl + "deals/" + deal_id);
-
+            var content = await response.Content.ReadAsStringAsync();
             switch (response.StatusCode)
             {
                 case System.Net.HttpStatusCode.OK:
-                    var content = await response.Content.ReadAsStringAsync();
                     deal = JsonConvert.DeserializeObject<DealModel>(content);
                     break;
 
                 case System.Net.HttpStatusCode.Unauthorized:
                     throw new AuthorizationException("Unknown token");
+
+                default:
+                    throw new Exception(content);
             }
             return deal;
         }
@@ -421,6 +476,19 @@ namespace EPSI_Bluetooth.Services
             var response = await client.PostAsync(resourceUri, new System.Net.Http.StringContent(jsonObject, System.Text.Encoding.UTF8, "application/json"));
 
             var strResponse = await response.Content.ReadAsStringAsync();
+
+            switch (response.StatusCode)
+            {
+                case System.Net.HttpStatusCode.Unauthorized:
+                    throw new AuthorizationException("Wrong token");
+
+                case System.Net.HttpStatusCode.BadRequest:
+                    throw new Exception(strResponse);
+
+                case System.Net.HttpStatusCode.InternalServerError:
+                    throw new Exception("Server error");
+
+            }
             Debug.WriteLine(strResponse);
             var deal = JsonConvert.DeserializeObject<DealModel>(strResponse);
 
@@ -434,7 +502,7 @@ namespace EPSI_Bluetooth.Services
             {
                 deal = await PostDealAsync(_token, model);
             }
-            catch (Exception)
+            catch (AuthorizationException)
             {
                 if (retry)
                 {
@@ -445,6 +513,10 @@ namespace EPSI_Bluetooth.Services
                 {
                     throw;
                 }
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
             return deal;
@@ -457,17 +529,21 @@ namespace EPSI_Bluetooth.Services
             HttpClient client = this.GetHttpClientToken(token);
 
             HttpResponseMessage response = await client.GetAsync(_serverUrl + "sensors/");
-
+            var content = await response.Content.ReadAsStringAsync();
             switch (response.StatusCode)
             {
                 case System.Net.HttpStatusCode.OK:
-                    var content = await response.Content.ReadAsStringAsync();
+                    
                     Debug.WriteLine(content);
                     container = JsonConvert.DeserializeObject<SensorContainer>(content);
                     break;
 
                 case System.Net.HttpStatusCode.Unauthorized:
                     throw new AuthorizationException("Unknown token");
+
+                default:
+                    throw new Exception(content);
+
             }
             return container;
         }
@@ -491,6 +567,10 @@ namespace EPSI_Bluetooth.Services
                     throw;
                 }
             }
+            catch (Exception)
+            {
+                throw;
+            }
             return container;
         }
         public async Task<SensorModel> GetSensorFromIdWithRetryAsync(string sensor_id, bool retry = true)
@@ -512,6 +592,10 @@ namespace EPSI_Bluetooth.Services
                     throw;
                 }
             }
+            catch (Exception)
+            {
+                throw;
+            }
             return sensor;
         }
 
@@ -522,16 +606,19 @@ namespace EPSI_Bluetooth.Services
             HttpClient client = this.GetHttpClientToken(token);
 
             HttpResponseMessage response = await client.GetAsync(_serverUrl + "sensors/" + sensor_id);
-
+            var content = await response.Content.ReadAsStringAsync();
             switch (response.StatusCode)
             {
                 case System.Net.HttpStatusCode.OK:
-                    var content = await response.Content.ReadAsStringAsync();
+                    
                     sensor = JsonConvert.DeserializeObject<SensorModel>(content);
                     break;
 
                 case System.Net.HttpStatusCode.Unauthorized:
                     throw new AuthorizationException("Unknown token");
+
+                default:
+                    throw new Exception(content);
             }
             return sensor;
         }
@@ -576,6 +663,10 @@ namespace EPSI_Bluetooth.Services
                     throw;
                 }
             }
+            catch (Exception)
+            {
+                throw;
+            }
             return success;
         }
 
@@ -594,6 +685,19 @@ namespace EPSI_Bluetooth.Services
             var response = await client.PostAsync(resourceUri, new System.Net.Http.StringContent(jsonObject, System.Text.Encoding.UTF8, "application/json"));
 
             var strResponse = await response.Content.ReadAsStringAsync();
+
+            switch (response.StatusCode)
+            {
+                case System.Net.HttpStatusCode.Unauthorized:
+                    throw new AuthorizationException("Wrong token");
+
+                case System.Net.HttpStatusCode.BadRequest:
+                    throw new Exception(strResponse);
+
+                case System.Net.HttpStatusCode.InternalServerError:
+                    throw new Exception("Server error");
+
+            }
             Debug.WriteLine(strResponse);
             var sensor = JsonConvert.DeserializeObject<SensorModel>(strResponse);
 
@@ -607,7 +711,7 @@ namespace EPSI_Bluetooth.Services
             {
                 sensor = await PostSensorAsync(_token, model);
             }
-            catch (Exception)
+            catch (AuthorizationException)
             {
                 if (retry)
                 {
@@ -619,8 +723,73 @@ namespace EPSI_Bluetooth.Services
                     throw;
                 }
             }
+            catch (Exception)
+            {
+                throw;
+            }
 
             return sensor;
+        }
+
+        public async Task<TaskModel> PostSendDealAsync(string token, TaskPostModel model)
+        {
+            HttpClient client = this.GetHttpClientToken(token);
+
+            Uri resourceUri = new Uri(_serverUrl + "tasks/deals/send");
+
+            string jsonObject = "";
+            Debug.WriteLine(model);
+            jsonObject = JsonConvert.SerializeObject(model);
+
+            Debug.WriteLine("ici");
+
+            var response = await client.PostAsync(resourceUri, new System.Net.Http.StringContent(jsonObject, System.Text.Encoding.UTF8, "application/json"));
+
+            var strResponse = await response.Content.ReadAsStringAsync();
+
+            switch (response.StatusCode)
+            {
+                case System.Net.HttpStatusCode.Unauthorized:
+                    throw new AuthorizationException("Wrong token");
+
+                case System.Net.HttpStatusCode.BadRequest:
+                    throw new Exception(strResponse);
+
+                case System.Net.HttpStatusCode.InternalServerError:
+                    throw new Exception("Server error");
+
+            }
+            Debug.WriteLine(strResponse);
+            var task = JsonConvert.DeserializeObject<TaskModel>(strResponse);
+
+            return task;
+        }
+
+        public async Task<TaskModel> PostSendTaskWithRetryAsync(TaskPostModel model, bool retry = true)
+        {
+            TaskModel task = null;
+            try
+            {
+                task = await PostSendDealAsync(_token, model);
+            }
+            catch (AuthorizationException)
+            {
+                if (retry)
+                {
+                    await RenewAuthToken();
+                    task = await PostSendDealAsync(_token, model);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return task;
         }
     }
 }

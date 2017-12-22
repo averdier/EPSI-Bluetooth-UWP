@@ -203,9 +203,9 @@ namespace EPSI_Bluetooth.ViewModels
             }
         }
 
-        public void OnEditItemClick(object sender, RoutedEventArgs e)
+        public void OnSendItemClick(object sender, RoutedEventArgs e)
         {
-
+            Views.ShellPage.ShellFrame.Navigate(typeof(Views.DealSendPage), Selected);
         }
 
         public void OnAddItemClick(object sender, RoutedEventArgs e)

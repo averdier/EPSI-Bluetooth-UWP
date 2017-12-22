@@ -37,9 +37,10 @@
 
         <!--CommandBar-->
         <CommandBar Grid.Row="1">
-            <AppBarButton x:Name="RefrechItemBtn"
-                          Label="Refresh"
-                          Icon="Refresh" 
+
+            <AppBarButton x:Name="RefreshItemBtn" 
+                          Label="Refresh" 
+                          Icon="Refresh"
                           Click="{x:Bind ViewModel.OnRefreshItemClick}"/>
 
             <AppBarButton x:Name="DeleteItemBtn" 
